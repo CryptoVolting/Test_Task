@@ -1,15 +1,9 @@
-package repository
+package pkg
 
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-)
-
-const (
-	operatorsTable    = " operators"
-	projectTable      = " projects"
-	projOperListTable = " project_operators_list"
 )
 
 type Config struct {

@@ -1,50 +1,46 @@
-package main
+package app
 
 import (
 	"context"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"testProject"
-	"testProject/pkg/handler"
-	"testProject/pkg/repository"
-	"testProject/pkg/service"
+	"testProject/configs"
+	"testProject/internal/handler"
+	repository2 "testProject/internal/repository"
+	"testProject/internal/usecase"
+	"testProject/pkg"
 )
 
-func main() {
+func Run(cfg *configs.Config) {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
-
-	if err := initConfig(); err != nil {
-		logrus.Fatalln("error initializing configs:", err.Error())
-	}
 
 	if err := godotenv.Load(); err != nil {
 		logrus.Fatalln("error loading env variables:", err.Error())
 	}
 
-	db, err := repository.NewPostgresDB(repository.Config{
-		Host:     viper.GetString("db.host"),
-		Port:     viper.GetString("db.port"),
-		Username: viper.GetString("db.username"),
-		DBName:   viper.GetString("db.dbname"),
-		SSLMode:  viper.GetString("db.sslmode"),
+	db, err := pkg.NewPostgresDB(pkg.Config{
+		Host:     cfg.DB.Host,
+		Port:     cfg.DB.Port,
+		Username: cfg.DB.UserName,
+		DBName:   cfg.DB.DbName,
+		SSLMode:  cfg.DB.SslMode,
 		Password: os.Getenv("DB_PASSWORD"),
 	})
 	if err != nil {
 		logrus.Fatalln("failed to initialize db:", err.Error())
 	}
-	repos := repository.NewSRepository(db)
-	services := service.NewService(repos)
-	handlers := handler.NewHandler(services)
+	repos := repository2.NewSRepository(db)
+	usecases := usecase.NewUsecase(repos)
+	handlers := handler.NewHandler(usecases)
 
-	srv := new(testProject.Server)
+	srv := new(pkg.Server)
 
 	go func() {
-		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil && err != http.ErrServerClosed {
+		if err := srv.Run(cfg.HTTP.Port, handlers.InitRoutes()); err != nil && err != http.ErrServerClosed {
 			logrus.Fatalln("error occurred while running http server:", err)
 		}
 	}()
@@ -64,10 +60,4 @@ func main() {
 	if err := db.Close(); err != nil {
 		logrus.Errorf("error occured on db connection close: %s", err.Error())
 	}
-}
-
-func initConfig() error {
-	viper.AddConfigPath("configs")
-	viper.SetConfigName("config")
-	return viper.ReadInConfig()
 }

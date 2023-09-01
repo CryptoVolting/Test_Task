@@ -3,11 +3,11 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"testProject"
+	"testProject/pkg"
 )
 
 func (h *Handler) createOperator(c *gin.Context) {
-	var input testProject.Operator
+	var input pkg.Operator
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -18,7 +18,7 @@ func (h *Handler) createOperator(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.Oper.Create(input)
+	id, err := h.usecases.Oper.Create(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -29,7 +29,7 @@ func (h *Handler) createOperator(c *gin.Context) {
 }
 
 func (h *Handler) getAllOperators(c *gin.Context) {
-	list, err := h.services.Oper.GetAll()
+	list, err := h.usecases.Oper.GetAll()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -41,7 +41,7 @@ func (h *Handler) getAllOperators(c *gin.Context) {
 }
 
 func (h *Handler) getOperator(c *gin.Context) {
-	id, err := h.services.Oper.GetById(c.Param("id"))
+	id, err := h.usecases.Oper.GetById(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -51,13 +51,13 @@ func (h *Handler) getOperator(c *gin.Context) {
 }
 
 func (h *Handler) updateOperator(c *gin.Context) {
-	var input testProject.UpdateOperatorInput
+	var input pkg.UpdateOperatorInput
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if err := h.services.Oper.UpdateById(c.Param("id"), input); err != nil {
+	if err := h.usecases.Oper.UpdateById(c.Param("id"), input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -67,7 +67,7 @@ func (h *Handler) updateOperator(c *gin.Context) {
 }
 
 func (h *Handler) deleteOperator(c *gin.Context) {
-	err := h.services.Oper.DeleteById(c.Param("id"))
+	err := h.usecases.Oper.DeleteById(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

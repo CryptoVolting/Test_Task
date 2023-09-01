@@ -2,15 +2,15 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"testProject/pkg/service"
+	"testProject/internal/usecase"
 )
 
 type Handler struct {
-	services *service.Service
+	usecases *usecase.Usecase
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+func NewHandler(usecases *usecase.Usecase) *Handler {
+	return &Handler{usecases: usecases}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
