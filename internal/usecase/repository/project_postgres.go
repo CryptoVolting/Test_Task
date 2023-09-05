@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strings"
-	"testProject/pkg"
+	"testProject/internal/entity"
 )
 
 const (
@@ -21,7 +21,7 @@ func NewProjectPostgres(db *sqlx.DB) *ProjectPostgres {
 	return &ProjectPostgres{db: db}
 }
 
-func (r *ProjectPostgres) Create(project pkg.Project) (string, error) {
+func (r *ProjectPostgres) Create(project entity.Project) (string, error) {
 	var id string
 	createProjectQuery := fmt.Sprintf("INSERT INTO%s (name, typeProject) VALUES ($1, $2) RETURNING id", projectTable)
 	row := r.db.QueryRow(createProjectQuery, project.Name, project.TypeProject)
@@ -32,8 +32,8 @@ func (r *ProjectPostgres) Create(project pkg.Project) (string, error) {
 	return id, nil
 }
 
-func (r *ProjectPostgres) GetAll() ([]pkg.Project, error) {
-	var lists []pkg.Project
+func (r *ProjectPostgres) GetAll() ([]entity.Project, error) {
+	var lists []entity.Project
 
 	query := fmt.Sprintf("SELECT * FROM%s;", projectTable)
 	err := r.db.Select(&lists, query)
@@ -41,8 +41,8 @@ func (r *ProjectPostgres) GetAll() ([]pkg.Project, error) {
 	return lists, err
 }
 
-func (r *ProjectPostgres) GetById(id string) (pkg.Project, error) {
-	var project pkg.Project
+func (r *ProjectPostgres) GetById(id string) (entity.Project, error) {
+	var project entity.Project
 
 	query := fmt.Sprintf("SELECT * FROM%s where id='%s';", projectTable, id)
 	err := r.db.Get(&project, query)
@@ -57,7 +57,7 @@ func (r *ProjectPostgres) DeleteById(id string) error {
 	return err
 }
 
-func (r *ProjectPostgres) UpdateById(projectId string, projectUpdate pkg.UpdateProjectInput) error {
+func (r *ProjectPostgres) UpdateById(projectId string, projectUpdate entity.UpdateProjectInput) error {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1
@@ -86,7 +86,7 @@ func (r *ProjectPostgres) UpdateById(projectId string, projectUpdate pkg.UpdateP
 	return err
 }
 
-func (r *ProjectPostgres) CreateAssign(input pkg.IdOperatorAndProject) (string, error) {
+func (r *ProjectPostgres) CreateAssign(input entity.IdOperatorAndProject) (string, error) {
 	var id string
 	createProjectQuery := fmt.Sprintf("INSERT INTO%s (operators_id, project_id) VALUES ($1, $2) RETURNING id", projOperListTable)
 	row := r.db.QueryRow(createProjectQuery, input.IdOperator, input.IdProject)

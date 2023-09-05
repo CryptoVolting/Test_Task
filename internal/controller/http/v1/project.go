@@ -1,20 +1,20 @@
-package handler
+package v1
 
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-	"testProject/pkg"
+	"testProject/internal/entity"
 )
 
 func (h *Handler) createProject(c *gin.Context) {
-	var input pkg.Project
+	var input entity.Project
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := h.usecases.Proj.Create(input)
+	id, err := h.usecases.ProjectUsage.Create(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -25,7 +25,7 @@ func (h *Handler) createProject(c *gin.Context) {
 }
 
 func (h *Handler) getAllProjects(c *gin.Context) {
-	list, err := h.usecases.Proj.GetAll()
+	list, err := h.usecases.ProjectUsage.GetAll()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -37,7 +37,7 @@ func (h *Handler) getAllProjects(c *gin.Context) {
 }
 
 func (h *Handler) getProject(c *gin.Context) {
-	id, err := h.usecases.Proj.GetById(c.Param("id"))
+	id, err := h.usecases.ProjectUsage.GetById(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -47,13 +47,13 @@ func (h *Handler) getProject(c *gin.Context) {
 }
 
 func (h *Handler) updateOProject(c *gin.Context) {
-	var input pkg.UpdateProjectInput
+	var input entity.UpdateProjectInput
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if err := h.usecases.Proj.UpdateById(c.Param("id"), input); err != nil {
+	if err := h.usecases.ProjectUsage.UpdateById(c.Param("id"), input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -63,7 +63,7 @@ func (h *Handler) updateOProject(c *gin.Context) {
 }
 
 func (h *Handler) deleteProject(c *gin.Context) {
-	err := h.usecases.Proj.DeleteById(c.Param("id"))
+	err := h.usecases.ProjectUsage.DeleteById(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -75,13 +75,13 @@ func (h *Handler) deleteProject(c *gin.Context) {
 }
 
 func (h *Handler) operatorToProject(c *gin.Context) {
-	var input pkg.IdOperatorAndProject
+	var input entity.IdOperatorAndProject
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := h.usecases.Proj.CreateAssign(input)
+	id, err := h.usecases.ProjectUsage.CreateAssign(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -98,7 +98,7 @@ func (h *Handler) delOperatorToProject(c *gin.Context) {
 		return
 	}
 
-	if err := h.usecases.Proj.DeleteByIdAssign(id); err != nil {
+	if err := h.usecases.ProjectUsage.DeleteByIdAssign(id); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

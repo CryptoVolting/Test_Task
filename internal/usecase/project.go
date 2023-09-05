@@ -1,45 +1,45 @@
 package usecase
 
 import (
-	"testProject/internal/repository"
-	"testProject/pkg"
+	"testProject/internal/entity"
+	"testProject/internal/usecase/repository"
 )
 
 type ProjectUsecase struct {
-	repo repository.Proj
+	projectUsage repository.ProjectUsage
 }
 
-func NewProjectUsecase(repo repository.Proj) *ProjectUsecase {
-	return &ProjectUsecase{repo: repo}
+func NewProjectUsecase(projectUsage repository.ProjectUsage) *ProjectUsecase {
+	return &ProjectUsecase{projectUsage: projectUsage}
 }
 
-func (s *ProjectUsecase) Create(project pkg.Project) (string, error) {
-	return s.repo.Create(project)
+func (s *ProjectUsecase) Create(project entity.Project) (string, error) {
+	return s.projectUsage.Create(project)
 }
 
-func (s *ProjectUsecase) GetAll() ([]pkg.Project, error) {
-	return s.repo.GetAll()
+func (s *ProjectUsecase) GetAll() ([]entity.Project, error) {
+	return s.projectUsage.GetAll()
 }
 
-func (s *ProjectUsecase) GetById(id string) (pkg.Project, error) {
-	return s.repo.GetById(id)
+func (s *ProjectUsecase) GetById(id string) (entity.Project, error) {
+	return s.projectUsage.GetById(id)
 }
 
 func (s *ProjectUsecase) DeleteById(id string) error {
-	return s.repo.DeleteById(id)
+	return s.projectUsage.DeleteById(id)
 }
 
-func (s *ProjectUsecase) UpdateById(id string, projectUpdate pkg.UpdateProjectInput) error {
+func (s *ProjectUsecase) UpdateById(id string, projectUpdate entity.UpdateProjectInput) error {
 	if err := projectUpdate.Validate(); err != nil {
 		return err
 	}
-	return s.repo.UpdateById(id, projectUpdate)
+	return s.projectUsage.UpdateById(id, projectUpdate)
 }
 
-func (s *ProjectUsecase) CreateAssign(input pkg.IdOperatorAndProject) (string, error) {
-	return s.repo.CreateAssign(input)
+func (s *ProjectUsecase) CreateAssign(input entity.IdOperatorAndProject) (string, error) {
+	return s.projectUsage.CreateAssign(input)
 }
 
 func (s *ProjectUsecase) DeleteByIdAssign(id int) error {
-	return s.repo.DeleteByIdAssign(id)
+	return s.projectUsage.DeleteByIdAssign(id)
 }

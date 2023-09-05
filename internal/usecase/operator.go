@@ -1,37 +1,37 @@
 package usecase
 
 import (
-	"testProject/internal/repository"
-	"testProject/pkg"
+	"testProject/internal/entity"
+	"testProject/internal/usecase/repository"
 )
 
 type OperatorUsecase struct {
-	repo repository.Oper
+	operatorUsage repository.OperatorUsage
 }
 
-func NewOperatorUsecase(repo repository.Oper) *OperatorUsecase {
-	return &OperatorUsecase{repo: repo}
+func NewOperatorUsecase(operatorUsage repository.OperatorUsage) *OperatorUsecase {
+	return &OperatorUsecase{operatorUsage: operatorUsage}
 }
 
-func (s *OperatorUsecase) Create(operator pkg.Operator) (string, error) {
-	return s.repo.Create(operator)
+func (s *OperatorUsecase) Create(operator entity.Operator) (string, error) {
+	return s.operatorUsage.Create(operator)
 }
 
-func (s *OperatorUsecase) GetAll() ([]pkg.Operator, error) {
-	return s.repo.GetAll()
+func (s *OperatorUsecase) GetAll() ([]entity.Operator, error) {
+	return s.operatorUsage.GetAll()
 }
 
-func (s *OperatorUsecase) GetById(id string) (pkg.Operator, error) {
-	return s.repo.GetById(id)
+func (s *OperatorUsecase) GetById(id string) (entity.Operator, error) {
+	return s.operatorUsage.GetById(id)
 }
 
 func (s *OperatorUsecase) DeleteById(id string) error {
-	return s.repo.DeleteById(id)
+	return s.operatorUsage.DeleteById(id)
 }
 
-func (s *OperatorUsecase) UpdateById(id string, operatorUpdate pkg.UpdateOperatorInput) error {
+func (s *OperatorUsecase) UpdateById(id string, operatorUpdate entity.UpdateOperatorInput) error {
 	if err := operatorUpdate.Validate(); err != nil {
 		return err
 	}
-	return s.repo.UpdateById(id, operatorUpdate)
+	return s.operatorUsage.UpdateById(id, operatorUpdate)
 }

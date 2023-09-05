@@ -24,5 +24,3 @@ CREATE TABLE IF NOT EXISTS project_operators_list
     operators_id    uuid            not null references operators (id) on delete cascade,
     project_id      uuid            not null references projects (id) on delete cascade
 );
-
-INSERT INTO project_operators_list (operators_id, project_id) VALUES ('d821f3d8-8995-40fc-9600-455440008b5a', '34ce163a-bf05-4f5a-9065-cf010d5a64a1');

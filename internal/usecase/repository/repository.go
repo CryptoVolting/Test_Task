@@ -1,8 +1,8 @@
-package usecase
+package repository
 
 import (
+	"github.com/jmoiron/sqlx"
 	"testProject/internal/entity"
-	"testProject/internal/usecase/repository"
 )
 
 type OperatorUsage interface {
@@ -23,14 +23,14 @@ type ProjectUsage interface {
 	DeleteByIdAssign(id int) error
 }
 
-type Usecase struct {
+type Repository struct {
 	OperatorUsage
 	ProjectUsage
 }
 
-func NewUsecase(repository *repository.Repository) *Usecase {
-	return &Usecase{
-		OperatorUsage: NewOperatorUsecase(repository.OperatorUsage),
-		ProjectUsage:  NewProjectUsecase(repository.ProjectUsage),
+func NewSRepository(db *sqlx.DB) *Repository {
+	return &Repository{
+		OperatorUsage: NewOperatorPostgres(db),
+		ProjectUsage:  NewProjectPostgres(db),
 	}
 }

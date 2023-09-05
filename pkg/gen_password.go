@@ -1,11 +1,11 @@
-package handler
+package pkg
 
 import (
 	"github.com/sethvargo/go-password/password"
-	"testProject/pkg"
+	"testProject/internal/entity"
 )
 
-func newPassword(operator *pkg.Operator) error {
+func NewPassword(operator *entity.Operator) error {
 	res, err := password.Generate(15, 3, 3, false, false)
 	if err != nil {
 		return err

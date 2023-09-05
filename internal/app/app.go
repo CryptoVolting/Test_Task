@@ -2,25 +2,20 @@ package app
 
 import (
 	"context"
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"testProject/configs"
-	"testProject/internal/handler"
-	repository2 "testProject/internal/repository"
+	"testProject/internal/controller/http/v1"
 	"testProject/internal/usecase"
+	"testProject/internal/usecase/repository"
 	"testProject/pkg"
 )
 
 func Run(cfg *configs.Config) {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
-
-	if err := godotenv.Load(); err != nil {
-		logrus.Fatalln("error loading env variables:", err.Error())
-	}
 
 	db, err := pkg.NewPostgresDB(pkg.Config{
 		Host:     cfg.DB.Host,
@@ -28,14 +23,14 @@ func Run(cfg *configs.Config) {
 		Username: cfg.DB.UserName,
 		DBName:   cfg.DB.DbName,
 		SSLMode:  cfg.DB.SslMode,
-		Password: os.Getenv("DB_PASSWORD"),
+		Password: cfg.DB.Password,
 	})
 	if err != nil {
 		logrus.Fatalln("failed to initialize db:", err.Error())
 	}
-	repos := repository2.NewSRepository(db)
-	usecases := usecase.NewUsecase(repos)
-	handlers := handler.NewHandler(usecases)
+	repositoryAtWork := repository.NewSRepository(db)
+	usecases := usecase.NewUsecase(repositoryAtWork)
+	handlers := v1.NewHandler(usecases)
 
 	srv := new(pkg.Server)
 

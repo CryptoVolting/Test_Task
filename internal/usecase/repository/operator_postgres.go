@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strings"
-	"testProject/pkg"
+	"testProject/internal/entity"
 )
 
 type OperatorPostgres struct {
@@ -15,7 +15,7 @@ func NewOperatorPostgres(db *sqlx.DB) *OperatorPostgres {
 	return &OperatorPostgres{db: db}
 }
 
-func (r *OperatorPostgres) Create(operator pkg.Operator) (string, error) {
+func (r *OperatorPostgres) Create(operator entity.Operator) (string, error) {
 	var id string
 	createOperatorQuery := fmt.Sprintf("INSERT INTO%s (name, surname, town, telephone, email, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id", operatorsTable)
 	row := r.db.QueryRow(createOperatorQuery, operator.Name, operator.Surname, operator.Town, operator.Telephone, operator.Email, operator.Password)
@@ -26,8 +26,8 @@ func (r *OperatorPostgres) Create(operator pkg.Operator) (string, error) {
 	return id, nil
 }
 
-func (r *OperatorPostgres) GetAll() ([]pkg.Operator, error) {
-	var lists []pkg.Operator
+func (r *OperatorPostgres) GetAll() ([]entity.Operator, error) {
+	var lists []entity.Operator
 
 	query := fmt.Sprintf("SELECT * FROM%s;", operatorsTable)
 	err := r.db.Select(&lists, query)
@@ -35,8 +35,8 @@ func (r *OperatorPostgres) GetAll() ([]pkg.Operator, error) {
 	return lists, err
 }
 
-func (r *OperatorPostgres) GetById(id string) (pkg.Operator, error) {
-	var operator pkg.Operator
+func (r *OperatorPostgres) GetById(id string) (entity.Operator, error) {
+	var operator entity.Operator
 
 	query := fmt.Sprintf("SELECT * FROM%s where id='%s';", operatorsTable, id)
 	err := r.db.Get(&operator, query)
@@ -51,7 +51,7 @@ func (r *OperatorPostgres) DeleteById(id string) error {
 	return err
 }
 
-func (r *OperatorPostgres) UpdateById(operatorId string, operatorUpdate pkg.UpdateOperatorInput) error {
+func (r *OperatorPostgres) UpdateById(operatorId string, operatorUpdate entity.UpdateOperatorInput) error {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1
