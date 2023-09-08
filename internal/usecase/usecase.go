@@ -5,6 +5,12 @@ import (
 	"testProject/internal/usecase/repository"
 )
 
+type Authorization interface {
+	CreateUser(user entity.User) (int, error)
+	GenerateToken(username, password string) (string, error)
+	ParseToken(token string) (int, error)
+}
+
 type OperatorUsage interface {
 	Create(operator entity.Operator) (string, error)
 	GetAll() ([]entity.Operator, error)
@@ -24,12 +30,14 @@ type ProjectUsage interface {
 }
 
 type Usecase struct {
+	Authorization
 	OperatorUsage
 	ProjectUsage
 }
 
 func NewUsecase(repository *repository.Repository) *Usecase {
 	return &Usecase{
+		Authorization: NewAuthService(repository.Authorization),
 		OperatorUsage: NewOperatorUsecase(repository.OperatorUsage),
 		ProjectUsage:  NewProjectUsecase(repository.ProjectUsage),
 	}

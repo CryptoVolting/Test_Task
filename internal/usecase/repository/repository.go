@@ -5,6 +5,11 @@ import (
 	"testProject/internal/entity"
 )
 
+type Authorization interface {
+	CreateUser(user entity.User) (int, error)
+	GetUser(username, password string) (entity.User, error)
+}
+
 type OperatorUsage interface {
 	Create(operator entity.Operator) (string, error)
 	GetAll() ([]entity.Operator, error)
@@ -24,12 +29,14 @@ type ProjectUsage interface {
 }
 
 type Repository struct {
+	Authorization
 	OperatorUsage
 	ProjectUsage
 }
 
 func NewSRepository(db *sqlx.DB) *Repository {
 	return &Repository{
+		Authorization: NewAuthPostgres(db),
 		OperatorUsage: NewOperatorPostgres(db),
 		ProjectUsage:  NewProjectPostgres(db),
 	}

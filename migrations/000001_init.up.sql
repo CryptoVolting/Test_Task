@@ -1,5 +1,13 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+CREATE TABLE IF NOT EXISTS users
+(
+    id            serial       not null unique,
+    name          varchar(255) not null,
+    username      varchar(255) not null unique,
+    password_hash varchar(255) not null
+);
+
 CREATE TABLE IF NOT EXISTS operators
 (
     id              uuid            not null unique default uuid_generate_v4(),

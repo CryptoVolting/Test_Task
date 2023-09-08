@@ -16,25 +16,35 @@ func NewHandler(usecases *usecase.Usecase) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	operator := router.Group("/operator")
+	auth := router.Group("/auth")
 	{
-		operator.POST("/new", h.createOperator)
-		operator.GET("/list", h.getAllOperators)
-		operator.GET("/:id", h.getOperator)
-		operator.PUT("/:id", h.updateOperator)
-		operator.DELETE("/:id", h.deleteOperator)
-
+		auth.POST("/sign-up", h.signUp)
+		auth.POST("/sign-in", h.signIn)
 	}
 
-	project := router.Group("/project")
+	api := router.Group("/api", h.userIdentity)
 	{
-		project.POST("/new", h.createProject)
-		project.GET("/list", h.getAllProjects)
-		project.GET("/:id", h.getProject)
-		project.PUT("/:id", h.updateOProject)
-		project.DELETE("/:id", h.deleteProject)
-		project.POST("/assign", h.operatorToProject)
-		project.DELETE("/remove/:id", h.delOperatorToProject)
+		operator := api.Group("/operator")
+		{
+			operator.POST("/new", h.createOperator)
+			operator.GET("/list", h.getAllOperators)
+			operator.GET("/:id", h.getOperator)
+			operator.PUT("/:id", h.updateOperator)
+			operator.DELETE("/:id", h.deleteOperator)
+
+		}
+
+		project := api.Group("/project")
+		{
+			project.POST("/new", h.createProject)
+			project.GET("/list", h.getAllProjects)
+			project.GET("/:id", h.getProject)
+			project.PUT("/:id", h.updateOProject)
+			project.DELETE("/:id", h.deleteProject)
+			project.POST("/assign", h.operatorToProject)
+			project.DELETE("/remove/:id", h.delOperatorToProject)
+		}
 	}
+
 	return router
 }
