@@ -92,9 +92,6 @@ func (r *OperatorPostgres) UpdateById(operatorId string, operatorUpdate entity.U
 		argId++
 	}
 
-	// name=$1
-	// surname=$1
-	// name=$1, surname=$2
 	setQuery := strings.Join(setValues, ", ")
 
 	query := fmt.Sprintf("UPDATE%s SET %s WHERE id=$%d;", operatorsTable, setQuery, argId)

@@ -5,9 +5,32 @@ import (
 	"testProject/internal/entity"
 )
 
+type Repository struct {
+	Authorization
+	PanelUsage
+	OperatorUsage
+	ProjectUsage
+}
+
+func NewRepository(db *sqlx.DB) *Repository {
+	return &Repository{
+		Authorization: NewAuthPostgres(db),
+		PanelUsage:    NewPanelPostgres(db),
+		OperatorUsage: NewOperatorPostgres(db),
+		ProjectUsage:  NewProjectPostgres(db),
+	}
+}
+
 type Authorization interface {
 	CreateUser(user entity.User) (int, error)
 	GetUser(username, password string) (entity.User, error)
+}
+
+type PanelUsage interface {
+	CreateUser(user entity.User) (int, error)
+	GetAll() ([]entity.User, error)
+	DeleteById(id string) error
+	UpdateById(id string, userUpdate entity.UpdateUserInput) error
 }
 
 type OperatorUsage interface {
@@ -26,18 +49,4 @@ type ProjectUsage interface {
 	DeleteById(id string) error
 	CreateAssign(input entity.IdOperatorAndProject) (string, error)
 	DeleteByIdAssign(id int) error
-}
-
-type Repository struct {
-	Authorization
-	OperatorUsage
-	ProjectUsage
-}
-
-func NewSRepository(db *sqlx.DB) *Repository {
-	return &Repository{
-		Authorization: NewAuthPostgres(db),
-		OperatorUsage: NewOperatorPostgres(db),
-		ProjectUsage:  NewProjectPostgres(db),
-	}
 }

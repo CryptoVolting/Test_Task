@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
@@ -28,8 +29,13 @@ func Run(cfg *configs.Config) {
 	if err != nil {
 		logrus.Fatalln("failed to initialize db:", err.Error())
 	}
-	repositoryAtWork := repository.NewSRepository(db)
-	usecases := usecase.NewUsecase(repositoryAtWork)
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: cfg.Redis.Port,
+	})
+
+	repositoryAtWork := repository.NewRepository(db)
+	cacheService := repository.NewRedisRepository(db)
+	usecases := usecase.NewUsecase(repositoryAtWork, cacheService, redisClient)
 	handlers := v1.NewHandler(usecases)
 
 	srv := new(pkg.Server)
@@ -54,5 +60,9 @@ func Run(cfg *configs.Config) {
 
 	if err := db.Close(); err != nil {
 		logrus.Errorf("error occured on db connection close: %s", err.Error())
+	}
+
+	if err := redisClient.Close(); err != nil {
+		logrus.Errorf("error occured on redisClient connection close: %s", err.Error())
 	}
 }

@@ -22,6 +22,23 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-in", h.signIn)
 	}
 
+	access := router.Group("/panel", h.userIdentity)
+
+	{
+		admin := access.Group("/admin", h.permissionMiddleware)
+		{
+			admin.POST("/new_user", h.createUser)
+			admin.DELETE("/:id", h.deleteUser)
+			admin.PUT("/:id", h.updateUser)
+			admin.GET("/list_users", h.getAllUsers)
+		}
+		user := access.Group("/user")
+		{
+			user.GET("/list_users", h.getAllUsers)
+		}
+
+	}
+
 	api := router.Group("/api", h.userIdentity)
 	{
 		operator := api.Group("/operator")

@@ -22,10 +22,10 @@ type AuthUsecase struct {
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"user_id"`
+	Admin *bool `json:"admin"`
 }
 
-func NewAuthService(authorization repository.Authorization) *AuthUsecase {
+func NewAuthUsecase(authorization repository.Authorization) *AuthUsecase {
 	return &AuthUsecase{authorization: authorization}
 }
 
@@ -46,13 +46,12 @@ func (s *AuthUsecase) GenerateToken(username, password string) (string, error) {
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		user.Id,
+		user.Admin,
 	})
-
 	return token.SignedString([]byte(signingKey))
 }
 
-func (s *AuthUsecase) ParseToken(accessToken string) (int, error) {
+func (s *AuthUsecase) ParseToken(accessToken string) (*bool, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
@@ -61,15 +60,14 @@ func (s *AuthUsecase) ParseToken(accessToken string) (int, error) {
 		return []byte(signingKey), nil
 	})
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-
 	claims, ok := token.Claims.(*tokenClaims)
 	if !ok {
-		return 0, errors.New("token claims are not of type *tokenClaims")
+		return nil, errors.New("token claims are not of type *tokenClaims")
 	}
 
-	return claims.UserId, nil
+	return claims.Admin, nil
 }
 
 func generatePasswordHash(password string) string {

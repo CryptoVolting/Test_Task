@@ -1,5 +1,7 @@
 http:
   port: "8080"
+redis:
+  port: ":6379"
 db:
   username: "postgres"
   host: "localhost"

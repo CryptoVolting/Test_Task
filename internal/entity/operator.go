@@ -3,13 +3,13 @@ package entity
 import "errors"
 
 type Operator struct {
-	Id        string `json:"id" db:"id"`
-	Name      string `json:"name" db:"name" binding:"required"`
-	Surname   string `json:"surname" db:"surname" binding:"required"`
-	Town      string `json:"town" db:"town" binding:"required"`
+	Id        string `json:"id"        db:"id"`
+	Name      string `json:"name"      db:"name"      binding:"required"`
+	Surname   string `json:"surname"   db:"surname"   binding:"required"`
+	Town      string `json:"town"      db:"town"      binding:"required"`
 	Telephone string `json:"telephone" db:"telephone" binding:"required"`
-	Email     string `json:"email" db:"email" binding:"required"`
-	Password  string `json:"password" db:"password"`
+	Email     string `json:"email"     db:"email"     binding:"required"`
+	Password  string `json:"password"  db:"password"`
 }
 
 type UpdateOperatorInput struct {
@@ -25,6 +25,5 @@ func (i UpdateOperatorInput) Validate() error {
 	if i.Name == nil && i.Surname == nil && i.Town == nil && i.Telephone == nil && i.Email == nil && i.Password == nil {
 		return errors.New("update structure has no values")
 	}
-
 	return nil
 }

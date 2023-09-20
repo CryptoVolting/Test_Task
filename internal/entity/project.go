@@ -3,8 +3,8 @@ package entity
 import "errors"
 
 type Project struct {
-	Id          string `json:"id" db:"id"`
-	Name        string `json:"name" db:"name" binding:"required"`
+	Id          string `json:"id"          db:"id"`
+	Name        string `json:"name"        db:"name"        binding:"required"`
 	TypeProject string `json:"typeProject" db:"typeproject" binding:"required"`
 }
 
@@ -20,12 +20,6 @@ func (i UpdateProjectInput) Validate() error {
 	}
 
 	return nil
-}
-
-type OperatorProject struct {
-	Id         string
-	IdOperator string
-	IdProject  string
 }
 
 type IdOperatorAndProject struct {

@@ -8,8 +8,9 @@ import (
 type (
 	// Config -.
 	Config struct {
-		DB   `yaml:"db"`
-		HTTP `yaml:"http"`
+		DB    `yaml:"db"`
+		HTTP  `yaml:"http"`
+		Redis `yaml:"redis"`
 	}
 
 	// DB -.
@@ -24,6 +25,10 @@ type (
 
 	// HTTP -.
 	HTTP struct {
+		Port string `env-required:"true" yaml:"port"`
+	}
+
+	Redis struct {
 		Port string `env-required:"true" yaml:"port"`
 	}
 )
